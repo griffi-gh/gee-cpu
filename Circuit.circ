@@ -2,7 +2,11 @@
 <project source="3.8.0" version="1.0">
   This file is intended to be loaded by Logisim-evolution v3.8.0(https://github.com/logisim-evolution/).
 
-  <lib desc="#Wiring" name="0"/>
+  <lib desc="#Wiring" name="0">
+    <tool name="Pin">
+      <a name="appearance" val="classic"/>
+    </tool>
+  </lib>
   <lib desc="#Gates" name="1"/>
   <lib desc="#Plexers" name="2"/>
   <lib desc="#Arithmetic" name="3"/>
@@ -52,6 +56,7 @@
     <a name="circuit" val="main"/>
     <a name="circuitnamedboxfixedsize" val="true"/>
     <a name="simulationFrequency" val="2048000.0"/>
+    <comp lib="0" loc="(390,560)" name="Clock"/>
     <comp lib="4" loc="(450,690)" name="RAM">
       <a name="addrWidth" val="16"/>
       <a name="appearance" val="logisim_evolution"/>
@@ -60,12 +65,17 @@
     </comp>
     <comp loc="(1010,620)" name="cpu">
       <a name="label" val="main_cpu"/>
+      <a name="labelvisible" val="false"/>
     </comp>
     <comp loc="(430,670)" name="ram_slot"/>
     <wire from="(1010,620)" to="(1020,620)"/>
     <wire from="(1020,590)" to="(1020,620)"/>
+    <wire from="(390,560)" to="(470,560)"/>
     <wire from="(440,590)" to="(1020,590)"/>
     <wire from="(440,590)" to="(440,670)"/>
+    <wire from="(470,560)" to="(470,620)"/>
+    <wire from="(470,620)" to="(470,670)"/>
+    <wire from="(470,620)" to="(790,620)"/>
     <wire from="(700,640)" to="(700,670)"/>
     <wire from="(700,640)" to="(790,640)"/>
   </circuit>
