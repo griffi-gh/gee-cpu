@@ -1,0 +1,20 @@
+instruction format
+ 
+ |||||||| ||||||||
+    LLLLxxxx yyyywwww
+		HHHX XXYYYWWW
+		VVVV VVVVwwww
+		
+L - main operation select
+H - sub operation select (16-bit instructions only)
+
+W - 16b write mux
+w - 8b write mux
+
+X - 16b read mux 1
+x - 8b read mux 1
+
+Y - 16b read mux 2
+y - 8b read mux 2
+
+V - 8-bit value
