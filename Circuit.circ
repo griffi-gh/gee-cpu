@@ -347,10 +347,10 @@
       <a name="max" val="0xffff"/>
       <a name="width" val="16"/>
     </comp>
-    <comp lib="8" loc="(483,871)" name="Text">
+    <comp lib="8" loc="(480,870)" name="Text">
       <a name="text" val="Registers, r1-16"/>
     </comp>
-    <comp lib="8" loc="(490,889)" name="Text">
+    <comp lib="8" loc="(490,885)" name="Text">
       <a name="text" val="8 bit but can be combined"/>
     </comp>
     <wire from="(1000,1080)" to="(1000,1090)"/>

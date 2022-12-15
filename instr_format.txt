@@ -3,7 +3,7 @@ instruction format
  |||||||| ||||||||
     LLLLxxxx yyyywwww
 		HHHX XXYYYWWW
-		VVVV VVVVwwww
+		VVVV VVVV
 		
 L - main operation select
 H - sub operation select (16-bit instructions only)
