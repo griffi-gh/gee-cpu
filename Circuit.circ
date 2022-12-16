@@ -108,6 +108,13 @@
       <circ-port dir="out" pin="150,200" x="60" y="60"/>
       <circ-port dir="out" pin="150,240" x="270" y="60"/>
     </appear>
+    <boardmap boardname="BASYS2">
+      <mc/>
+      <mc/>
+      <mc/>
+      <mc/>
+      <mc/>
+    </boardmap>
     <comp lib="0" loc="(1000,1460)" name="Splitter">
       <a name="bit1" val="0"/>
       <a name="bit10" val="1"/>
@@ -779,8 +786,14 @@
     <comp lib="8" loc="(615,1310)" name="Text">
       <a name="text" val="8 bit but can be combined"/>
     </comp>
-    <comp loc="(270,1400)" name="pull"/>
-    <comp loc="(270,1550)" name="pull"/>
+    <comp loc="(270,1400)" name="pull">
+      <a name="label" val="pull_1"/>
+      <a name="labelvisible" val="false"/>
+    </comp>
+    <comp loc="(270,1550)" name="pull">
+      <a name="label" val="pull_2"/>
+      <a name="labelvisible" val="false"/>
+    </comp>
     <wire from="(1000,1270)" to="(1000,1380)"/>
     <wire from="(1000,1270)" to="(1170,1270)"/>
     <wire from="(1000,1380)" to="(1000,1460)"/>
