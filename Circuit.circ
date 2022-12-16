@@ -2,7 +2,11 @@
 <project source="3.8.0" version="1.0">
   This file is intended to be loaded by Logisim-evolution v3.8.0(https://github.com/logisim-evolution/).
 
-  <lib desc="#Wiring" name="0"/>
+  <lib desc="#Wiring" name="0">
+    <tool name="Pin">
+      <a name="appearance" val="classic"/>
+    </tool>
+  </lib>
   <lib desc="#Gates" name="1"/>
   <lib desc="#Plexers" name="2"/>
   <lib desc="#Arithmetic" name="3"/>
@@ -485,19 +489,19 @@
     <comp lib="4" loc="(940,2920)" name="Register">
       <a name="appearance" val="logisim_evolution"/>
     </comp>
-    <comp lib="8" loc="(1873,430)" name="Text">
+    <comp lib="8" loc="(1870,430)" name="Text">
       <a name="text" val="pipeline"/>
     </comp>
-    <comp lib="8" loc="(258,62)" name="Text">
+    <comp lib="8" loc="(255,60)" name="Text">
       <a name="font" val="SansSerif bold 33"/>
       <a name="text" val="INPUTS"/>
     </comp>
-    <comp lib="8" loc="(616,1063)" name="Text">
-      <a name="text" val="8 bit but can be combined"/>
-    </comp>
-    <comp lib="8" loc="(618,1041)" name="Text">
+    <comp lib="8" loc="(615,1040)" name="Text">
       <a name="font" val="SansSerif bold 33"/>
       <a name="text" val="Registers, r1-16"/>
+    </comp>
+    <comp lib="8" loc="(615,1060)" name="Text">
+      <a name="text" val="8 bit but can be combined"/>
     </comp>
     <wire from="(1000,1020)" to="(1000,1130)"/>
     <wire from="(1000,1020)" to="(1170,1020)"/>
