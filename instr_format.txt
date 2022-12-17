@@ -21,3 +21,15 @@ V - 8-bit value
 
 x,Y,X,Y may be resused as subinstruction 
 		pointers or for arbitrary data
+
+example instr
+
+0b0001_01101001_0000 (0x1690)
+writes 69 to register 0
+
+instruction set
+
+nop
+load <reg8> <const8>
+
+
