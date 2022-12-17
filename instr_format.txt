@@ -31,7 +31,7 @@ writes 69 to register 0
 rC = rA + rB
 
 example program
-1010 1022 2000
+1010 1022 200a
 
 instruction set
 
