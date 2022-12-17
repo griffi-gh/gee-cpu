@@ -27,7 +27,7 @@ example instr
 0b0001_01101001_0000 (0x1690)
 writes 69 to register 0
 
-0b0010_000_000_001_010 (0x2000)
+0b0010_000_000_001_010 (0x200a)
 rC = rA + rB
 
 example program
