@@ -1064,25 +1064,25 @@
     <comp lib="8" loc="(1425,3530)" name="Text">
       <a name="text" val="not sure if using pla to compare a number to zero is a good idea..."/>
     </comp>
-    <comp lib="8" loc="(1479,1076)" name="Text">
+    <comp lib="8" loc="(1475,1075)" name="Text">
       <a name="text" val="alu r16"/>
     </comp>
-    <comp lib="8" loc="(1634,1279)" name="Text">
+    <comp lib="8" loc="(1630,1275)" name="Text">
       <a name="text" val="jump16"/>
     </comp>
-    <comp lib="8" loc="(1778,1126)" name="Text">
+    <comp lib="8" loc="(1775,1125)" name="Text">
       <a name="text" val="1 - if zero"/>
     </comp>
-    <comp lib="8" loc="(1782,1145)" name="Text">
+    <comp lib="8" loc="(1780,1145)" name="Text">
       <a name="text" val="2 - if carry"/>
     </comp>
-    <comp lib="8" loc="(1785,1108)" name="Text">
+    <comp lib="8" loc="(1785,1105)" name="Text">
       <a name="text" val="0 - no cond"/>
     </comp>
-    <comp lib="8" loc="(1794,1163)" name="Text">
+    <comp lib="8" loc="(1790,1160)" name="Text">
       <a name="text" val="3 - if not zero"/>
     </comp>
-    <comp lib="8" loc="(1797,1182)" name="Text">
+    <comp lib="8" loc="(1795,1180)" name="Text">
       <a name="text" val="4 - if not carry"/>
     </comp>
     <comp lib="8" loc="(430,305)" name="Text">
