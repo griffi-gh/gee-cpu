@@ -30,6 +30,7 @@ writes 69 to register 0
 0b0010_000_000_001_010 (0x200a)
 rC = rA + rB
 
+1ff0 1ff1 3000 jump to 0xffff
 example program
 1010 1022 200a
 
