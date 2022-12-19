@@ -22,6 +22,24 @@ V - 8-bit value
 x,Y,X,Y may be resused as subinstruction 
 		pointers or for arbitrary data
 
+-==============================================-
+
+instruction set
+
+{} - one of
+[] - optional, one of
+<> - argument
+
+0x0 = nop
+0x1 = const8 <r8> <u8>
+0x2 = alu <r16> = <r16> {-,+,~} <r16>
+          <r16> ~ <r16>
+0x3 = jump [z,c,!z,!c,never] <r16>
+0x4 = 
+
+
+-=================================================-
+
 example instr
 
 0b0001_01101001_0000 (0x1690)
@@ -31,12 +49,5 @@ writes 69 to register 0
 rC = rA + rB
 
 1ff0 1ff1 3000 jump to 0xffff
-example program
+
 1010 1022 200a
-
-instruction set
-
-nop
-load <reg8> <const8>
-
-
