@@ -12,5 +12,6 @@ fn main() -> Result<()> {
   };
   let data = fs::read_to_string(path)?;
   let tokens = Tokenizer::tokenize(&data)?;
+  println!("{:?}", tokens);
   Ok(())
 }

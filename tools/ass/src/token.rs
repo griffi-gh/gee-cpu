@@ -103,7 +103,7 @@ impl<'a> Tokenizer<'a> {
   }
 
   fn peek(&self, offset: isize) -> Option<char> {
-    self.code.chars().nth(self.position.char)
+    self.code.chars().nth(self.position.char.wrapping_add_signed(offset))
   }
   fn take(&mut self) -> Option<char> {
     let chr = self.peek(0)?;
@@ -116,25 +116,41 @@ impl<'a> Tokenizer<'a> {
   pub fn step(&mut self) -> Result<bool> {
     macro_rules! err {
       ($message: expr) => {{
-        bail!("Error on line {}:{}\n\t- {}", self.position.row, self.position.col, $message);
+        bail!("Error on line {}, column {}\t||\t{}", self.position.row + 1, self.position.col + 1, $message);
       }};
     }
+
     let chr = match self.peek(0) {
+      Some(x) => x,
       None => return Ok(true),
-      Some(x) => x
     };
+
     if chr.is_whitespace() {
+      println!("guess: Whitespace token");
+      loop {
+        match self.peek(0) {
+          Some(x) => {
+            if x.is_whitespace() {
+              self.take().unwrap();
+            } else {
+              break
+            }
+          }
+          None => break
+        }
+      }
       self.tokens.push(Token {
         token: TokenType::Whitespace,
         position: self.position,
       });
       return Ok(false);
     }
-    if chr.is_digit(10) {
-      let chr = self.take().unwrap();
 
-      let mut radix = if chr == '0' {
-        match self.peek(0) {
+    if chr.is_digit(10) {
+      println!("guess: Integer token");
+
+      let radix = if chr == '0' {
+        match self.peek(1) {
           Some('x') => 16,
           Some('o') => 8,
           Some('b') => 2,
@@ -144,37 +160,46 @@ impl<'a> Tokenizer<'a> {
 
       if radix != 10 {
         self.take().unwrap();
-        if self.peek(0).is_none() {
-          err!("Malformed integer: EOF before integer body");
+        self.take().unwrap();
+        match self.peek(0) {
+          Some(x) => {
+            if !x.is_digit(radix) {
+              err!("Malformed integer: No integer body")
+            }
+          }
+          None => err!("Malformed integer: EOF before integer body")
         }
       }
 
-      let mut value = 0;
+      let mut value: isize = 0;
       loop {
-        let chr = self.peek(0);
-        if chr.is_none() {
-          break
-        }
-        let chr = chr.unwrap();
+        let chr = match self.peek(0) {
+          Some(x) => x,
+          None => break,
+        };
         match chr.to_digit(radix) {
           Some(x) => {
+            value *= radix as isize;
+            value += x as isize;
             self.take().unwrap();
-            value *= radix;
-            value += x;
           }
           None => break
         }
       }
-    }
-    match chr {
 
-      _ => ()
+      self.tokens.push(Token {
+        token: TokenType::IntegerLiteral(value),
+        position: self.position,
+      });
+      return Ok(false);
     }
-    Ok(false)
+
+    err!("Invalid token: No token matched");
   }
+
   /// Run tokenizer until the end of file (EOF)
   pub fn run(&mut self) -> Result<()> {
-    while !self.step()? {}
+    while !(self.step()?) {}
     Ok(())
   }
   /// Consumes [`Tokenizer`], returns a vector of [`Token`]s
