@@ -1,5 +1,5 @@
 use anyhow::{Result, bail};
-use crate::arch::Register;
+use crate::arch::{Register, Register8, Register16};
 
 /// Represents position of a character in code
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -45,7 +45,7 @@ impl Default for CodePosition {
 
 #[derive(Clone, Debug)]
 pub enum TokenType {
-  Instruction(String),
+  InstructionOrKeyword(String),
   StringLiteral(String),
   // CharLiteral(char),
   IntegerLiteral(isize),
@@ -104,6 +104,13 @@ impl<'a> Tokenizer<'a> {
 
   fn peek(&self, offset: isize) -> Option<char> {
     self.code.chars().nth(self.position.char.wrapping_add_signed(offset))
+  }
+  fn peek_range(&self, offset: isize, len: usize) -> Option<&str> {
+    let start = self.position.char.wrapping_add_signed(offset);
+    if start + len > self.code.len() {
+      return None
+    }
+    Some(&self.code[start..(start+len)])
   }
   fn take(&mut self) -> Option<char> {
     let chr = self.peek(0)?;
@@ -231,7 +238,52 @@ impl<'a> Tokenizer<'a> {
     // INSTR TOKEN
 
     if chr.is_alphabetic() {
-      //TODO
+      let mut word = String::new();
+      while let Some(chr) = self.peek(0) {
+        if !chr.is_alphanumeric() { break }
+        self.take().unwrap();
+        word.push(chr);
+      }
+      word = word.to_lowercase();
+      // close your eyes please
+      let register = match word.as_ref() {
+        "rax" => Some(Register::Register8(Register8::Ax)),
+        "ray" => Some(Register::Register8(Register8::Ay)),
+        "rbx" => Some(Register::Register8(Register8::Bx)),
+        "rby" => Some(Register::Register8(Register8::By)),
+        "rcx" => Some(Register::Register8(Register8::Cx)),
+        "rcy" => Some(Register::Register8(Register8::Cy)),
+        "rdx" => Some(Register::Register8(Register8::Dx)),
+        "rdy" => Some(Register::Register8(Register8::Dy)),
+        "rex" => Some(Register::Register8(Register8::Ex)),
+        "rey" => Some(Register::Register8(Register8::Ey)),
+        "rfx" => Some(Register::Register8(Register8::Fx)),
+        "rfy" => Some(Register::Register8(Register8::Fy)),
+        "rgx" => Some(Register::Register8(Register8::Gx)),
+        "rgy" => Some(Register::Register8(Register8::Gy)),
+        "rhx" => Some(Register::Register8(Register8::Hx)),
+        "rhy" => Some(Register::Register8(Register8::Hy)),
+        "ra" => Some(Register::Register16(Register16::A)),
+        "rb" => Some(Register::Register16(Register16::B)),
+        "rc" => Some(Register::Register16(Register16::C)),
+        "rd" => Some(Register::Register16(Register16::D)),
+        "re" => Some(Register::Register16(Register16::E)),
+        "rf" => Some(Register::Register16(Register16::F)),
+        "rg" => Some(Register::Register16(Register16::G)),
+        "rh" => Some(Register::Register16(Register16::H)),
+        _ => None
+      };
+      self.tokens.push(if let Some(reg) = register {
+        Token {
+          token: TokenType::RegisterPointer(reg),
+          position: start_pos,
+        }
+      } else {
+        Token {
+          token: TokenType::InstructionOrKeyword(word),
+          position: start_pos,
+        }
+      })
     }
 
     err!("Invalid token: No token matched");
