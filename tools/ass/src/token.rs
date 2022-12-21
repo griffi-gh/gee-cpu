@@ -121,13 +121,17 @@ impl<'a> Tokenizer<'a> {
       }};
     }
 
+    let start_pos = self.position;
     let chr = match self.peek(0) {
       Some(x) => x,
       None => return Ok(true),
     };
 
+
+    // WHITESPACE TOKEN
+
+
     if chr.is_whitespace() {
-      println!("guess: Whitespace token");
       loop {
         match self.peek(0) {
           Some(x) => {
@@ -142,14 +146,16 @@ impl<'a> Tokenizer<'a> {
       }
       self.tokens.push(Token {
         token: TokenType::Whitespace,
-        position: self.position,
+        position: start_pos,
       });
       return Ok(false);
     }
 
-    if chr.is_digit(10) {
-      println!("guess: Integer token");
 
+    //INTEGER TOKEN
+
+
+    if chr.is_digit(10) {
       let radix = if chr == '0' {
         match self.peek(1) {
           Some('x') => 16,
@@ -190,23 +196,52 @@ impl<'a> Tokenizer<'a> {
 
       self.tokens.push(Token {
         token: TokenType::IntegerLiteral(value),
-        position: self.position,
+        position: start_pos,
       });
       return Ok(false);
     }
 
+
+    //STRING TOKEN
+
+
     if chr == '"' {
-      let start_pos = self.position;
       self.take().unwrap();
       let mut str = String::new();
       loop {
         let char = match self.take() {
+          Some('\\') => {
+            match self.take() {
+              //TODO more escape seq and hex escape
+              Some('n') => str.push('\n'),
+              Some('r') => str.push('\r'),
+              Some('"') => str.push('"'),
+              Some(x) => err!(format!("Invalid escape sequence: \\{}", x)),
+              None => err!("Malformed escape sequence: EOF reached")
+            };
+          }
+          Some('"') => {
+            break
+          }
           Some(x) => {
             str.push(x);
           }
           None => err!(format!("Unterminated string (starts on line {}, column {})", start_pos.row + 1, start_pos.col + 1))
         };
       }
+
+      self.tokens.push(Token {
+        token: TokenType::StringLiteral(str),
+        position: start_pos,
+      });
+      return Ok(false);
+    }
+
+
+    // INSTR TOKEN
+
+    if chr.is_alphabetic() {
+      //TODO
     }
 
     err!("Invalid token: No token matched");
