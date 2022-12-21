@@ -48,6 +48,7 @@ impl Default for CodePosition {
 pub enum TokenType {
   Instruction(String),
   StringLiteral(String),
+  // CharLiteral(char),
   IntegerLiteral(isize),
   SymbolLiteral(String),
   Symbol(String),
@@ -192,6 +193,20 @@ impl<'a> Tokenizer<'a> {
         position: self.position,
       });
       return Ok(false);
+    }
+
+    if chr == '"' {
+      let start_pos = self.position;
+      self.take().unwrap();
+      let mut str = String::new();
+      loop {
+        let char = match self.take() {
+          Some(x) => {
+            str.push(x);
+          }
+          None => err!(format!("Unterminated string (starts on line {}, column {})", start_pos.row + 1, start_pos.col + 1))
+        };
+      }
     }
 
     err!("Invalid token: No token matched");
