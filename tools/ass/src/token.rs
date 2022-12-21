@@ -1,4 +1,4 @@
-use anyhow::{Result};
+use anyhow::{Result, bail};
 use crate::arch::Register;
 
 /// Represents position of a character in code
@@ -44,30 +44,34 @@ impl Default for CodePosition {
   }
 }
 
-#[derive(Clone, Copy, Debug)]
-pub enum TokenType<'a> {
-  Instruction(&'a str),
-  StringLiteral(&'a str),
+#[derive(Clone, Debug)]
+pub enum TokenType {
+  Instruction(String),
+  StringLiteral(String),
   IntegerLiteral(isize),
-  SymbolLiteral(&'a str),
-  Symbol(&'a str),
+  SymbolLiteral(String),
+  Symbol(String),
   RegisterPointer(Register),
   Whitespace,
   Eof,
 }
 
-#[derive(Clone, Copy, Debug)]
-pub struct Token<'a> {
-  pub token: TokenType<'a>
+#[derive(Clone, Debug)]
+pub struct Token {
+  pub token: TokenType,
+  pub position: CodePosition
 }
 
 #[derive(Clone)]
 pub struct Tokenizer<'a> {
   code: &'a str,
-  tokens: Vec<Token<'a>>,
+  tokens: Vec<Token>,
   position: CodePosition
 }
 impl<'a> Tokenizer<'a> {
+  /// Creates a new [`Tokenizer`]
+  /// 
+  /// Please note that in most cases `Tokenizer::tokenize`  should be used instead!
   pub fn new(code: &'a str) -> Self {
     Self {
       code,
@@ -75,25 +79,108 @@ impl<'a> Tokenizer<'a> {
       position: CodePosition::default()
     }
   }
+
+  /// Shorthand function.
+  /// 
+  /// This code:
+  /// ```no_run
+  /// let code = "...";
+  /// let tokens = {
+  ///   let mut tokenizer = Tokenizer::new(code);
+  ///   tokenizer.run()?;
+  ///   tokenizer.finish()
+  /// };
+  /// ```
+  /// Is equivalent to this:
+  /// ```no_run
+  /// let code = "...";
+  /// let tokens = Tokenizer::tokenize(code)?;
+  /// ```
+  pub fn tokenize(code: &'a str) -> Result<Vec<Token>> {
+    let mut tokenizer = Self::new(code);
+    tokenizer.run()?;
+    Ok(tokenizer.finish())
+  }
+
   fn peek(&self, offset: isize) -> Option<char> {
     self.code.chars().nth(self.position.char)
   }
-  fn eat(&mut self) -> Option<char> {
+  fn take(&mut self) -> Option<char> {
     let chr = self.peek(0)?;
     self.position = self.position.next_auto(chr);
     Some(chr)
   }
-  pub fn step(&mut self) -> Result<()> {
-    Ok(())
+
+  /// Compute at most one token
+  /// Returns true if EOF
+  pub fn step(&mut self) -> Result<bool> {
+    macro_rules! err {
+      ($message: expr) => {{
+        bail!("Error on line {}:{}\n\t- {}", self.position.row, self.position.col, $message);
+      }};
+    }
+    let chr = match self.peek(0) {
+      None => return Ok(true),
+      Some(x) => x
+    };
+    if chr.is_whitespace() {
+      self.tokens.push(Token {
+        token: TokenType::Whitespace,
+        position: self.position,
+      });
+      return Ok(false);
+    }
+    if chr.is_digit(10) {
+      let chr = self.take().unwrap();
+
+      let mut radix = if chr == '0' {
+        match self.peek(0) {
+          Some('x') => 16,
+          Some('o') => 8,
+          Some('b') => 2,
+          _ => 10
+        }
+      } else { 10 };
+
+      if radix != 10 {
+        self.take().unwrap();
+        if self.peek(0).is_none() {
+          err!("Malformed integer: EOF before integer body");
+        }
+      }
+
+      let mut value = 0;
+      loop {
+        let chr = self.peek(0);
+        if chr.is_none() {
+          break
+        }
+        let chr = chr.unwrap();
+        match chr.to_digit(radix) {
+          Some(x) => {
+            self.take().unwrap();
+            value *= radix;
+            value += x;
+          }
+          None => break
+        }
+      }
+    }
+    match chr {
+
+      _ => ()
+    }
+    Ok(false)
   }
   /// Run tokenizer until the end of file (EOF)
   pub fn run(&mut self) -> Result<()> {
-    loop {
-      self.step()?;
-    }
+    while !self.step()? {}
     Ok(())
   }
-  pub fn finish(self) -> Vec<Token<'a>> {
+  /// Consumes [`Tokenizer`], returns a vector of [`Token`]s
+  /// 
+  /// Use `Tokenizer::run` to actually tokenize the code!
+  pub fn finish(self) -> Vec<Token> {
     self.tokens
   }
 }
