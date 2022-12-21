@@ -10,6 +10,6 @@ fn main() -> Result<()> {
     None => bail!("No path provided"),
   };
   let data = fs::read_to_string(path)?;
-  let tokenizer = Tokenizer::new(&data).finish();
+  let tokens = Tokenizer::new(&data).finish();
   Ok(())
 }
