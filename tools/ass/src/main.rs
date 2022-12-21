@@ -1,6 +1,7 @@
 use anyhow::{Result, bail};
 use std::{env, fs};
 
+mod arch;
 mod token;
 use token::Tokenizer;
 
