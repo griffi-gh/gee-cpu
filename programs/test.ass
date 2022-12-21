@@ -1,1 +1,2 @@
 nop
+load8 rAx 0xff

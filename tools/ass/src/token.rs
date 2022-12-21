@@ -283,7 +283,8 @@ impl<'a> Tokenizer<'a> {
           token: TokenType::InstructionOrKeyword(word),
           position: start_pos,
         }
-      })
+      });
+      return Ok(false);
     }
 
     err!("Invalid token: No token matched");
