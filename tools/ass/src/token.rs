@@ -26,8 +26,7 @@ impl CodePosition {
     Self {
       char: self.char + 1,
       col: 0,
-      row: self.row + 1,
-      ..*self
+      row: self.row + 1
     }
   }
   /// Calls [`CodePosition::next_row`] if the character is newline, otherwise [`CodePosition::next`]
@@ -132,16 +131,11 @@ impl<'a> Tokenizer<'a> {
 
 
     if chr.is_whitespace() {
-      loop {
-        match self.peek(0) {
-          Some(x) => {
-            if x.is_whitespace() {
-              self.take().unwrap();
-            } else {
-              break
-            }
-          }
-          None => break
+      while let Some(x) = self.peek(0) {
+        if x.is_whitespace() {
+          self.take().unwrap();
+        } else {
+          break
         }
       }
       self.tokens.push(Token {
@@ -155,7 +149,7 @@ impl<'a> Tokenizer<'a> {
     //INTEGER TOKEN
 
 
-    if chr.is_digit(10) {
+    if chr.is_ascii_digit() {
       let radix = if chr == '0' {
         match self.peek(1) {
           Some('x') => 16,
@@ -179,11 +173,7 @@ impl<'a> Tokenizer<'a> {
       }
 
       let mut value: isize = 0;
-      loop {
-        let chr = match self.peek(0) {
-          Some(x) => x,
-          None => break,
-        };
+      while let Some(chr) = self.peek(0) {
         match chr.to_digit(radix) {
           Some(x) => {
             value *= radix as isize;
@@ -209,7 +199,7 @@ impl<'a> Tokenizer<'a> {
       self.take().unwrap();
       let mut str = String::new();
       loop {
-        let char = match self.take() {
+        match self.take() {
           Some('\\') => {
             match self.take() {
               //TODO more escape seq and hex escape
@@ -227,7 +217,7 @@ impl<'a> Tokenizer<'a> {
             str.push(x);
           }
           None => err!(format!("Unterminated string (starts on line {}, column {})", start_pos.row + 1, start_pos.col + 1))
-        };
+        }
       }
 
       self.tokens.push(Token {
